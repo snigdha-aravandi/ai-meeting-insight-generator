@@ -153,14 +153,8 @@ JSON Format:
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{
-                    parts: [{ text: userPrompt }]
-                }],
-                system_instruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-                generationConfig: {
-                    responseMimeType: "application/json"
-                }
+                    parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                }]
             })
         });
 
