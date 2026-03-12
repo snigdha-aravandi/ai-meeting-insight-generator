@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Real AI API Call using Google Gemini
      */
     async function analyzeMeetingTranscript(transcript) {
-        const URL = `https://generativelanguage.googleapis.com/v1/models/${CONFIG.MODEL}:generateContent?key=${CONFIG.API_KEY}`;
+        const URL = `https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.MODEL}:generateContent?key=${CONFIG.API_KEY}`;
 
         const systemPrompt = "You are an AI meeting assistant. Extract structured information from meeting transcripts.";
 
