@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (CONFIG.API_KEY === 'PASTE_YOUR_GEMINI_API_KEY_HERE' || !CONFIG.API_KEY) {
+        if (CONFIG.API_KEY === 'AIzaSyCcG7TrZ7NauMH6zJZAh8IauMXJIFaJTgY' || !CONFIG.API_KEY) {
             alert('Please add your Google Gemini API key in main.js to use the AI features.');
             return;
         }
