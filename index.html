@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScribeAI | Meeting Transcript Insights</title>
+    <meta name="description"
+        content="Generate summaries, action items, owners, and deadlines from your meeting transcripts instantly.">
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="container">
+        <header class="app-header">
+            <div class="logo">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <span>ScribeAI</span>
+            </div>
+            <h1>Meeting Insight Generator</h1>
+            <p>Transform your messy transcripts into structured action items.</p>
+        </header>
+
+        <section class="input-section">
+            <div class="input-wrapper">
+                <label for="transcript-input">Paste Meeting Transcript</label>
+                <textarea id="transcript-input"
+                    placeholder="E.g. [10:00] Sarah: We need to finalize the Q3 budget by next Friday. John, can you take care of the spreadsheet?..."></textarea>
+            </div>
+            <button id="generate-btn" class="primary-btn">
+                <span class="btn-text">Generate Insights</span>
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <div class="loader" id="btn-loader"></div>
+            </button>
+        </section>
+
+        <section class="results-grid">
+            <!-- Card 1: Meeting Summary -->
+            <div class="result-card" id="card-summary">
+                <div class="card-header">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <h3>Meeting Summary</h3>
+                </div>
+                <div class="card-content empty">
+                    <div class="placeholder-lines">
+                        <div class="line"></div>
+                        <div class="line short"></div>
+                    </div>
+                    <p class="empty-state-text">Waiting for transcript...</p>
+                </div>
+            </div>
+
+            <!-- Card 2: Action Items -->
+            <div class="result-card" id="card-action-items">
+                <div class="card-header">
+                    <i class="fa-solid fa-list-check"></i>
+                    <h3>Action Items</h3>
+                </div>
+                <div class="card-content empty">
+                    <div class="placeholder-lines">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <p class="empty-state-text">Waiting for transcript...</p>
+                </div>
+            </div>
+
+            <!-- Card 3: Owners -->
+            <div class="result-card" id="card-owners">
+                <div class="card-header">
+                    <i class="fa-solid fa-user-tag"></i>
+                    <h3>Owners</h3>
+                </div>
+                <div class="card-content empty">
+                    <div class="placeholder-lines">
+                        <div class="line short"></div>
+                    </div>
+                    <p class="empty-state-text">Waiting for transcript...</p>
+                </div>
+            </div>
+
+            <!-- Card 4: Deadlines -->
+            <div class="result-card" id="card-deadlines">
+                <div class="card-header">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <h3>Deadlines</h3>
+                </div>
+                <div class="card-content empty">
+                    <div class="placeholder-lines">
+                        <div class="line short"></div>
+                    </div>
+                    <p class="empty-state-text">Waiting for transcript...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="actions-section">
+            <button id="export-btn" class="secondary-btn" disabled>
+                <i class="fa-solid fa-download"></i>
+                <span>Export to Markdown</span>
+            </button>
+        </section>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
