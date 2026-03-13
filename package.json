@@ -1,0 +1,23 @@
+{
+  "name": "agent",
+  "version": "1.0.0",
+  "description": "The **AI Meeting Insight Generator** (ScribeAI) is a high-performance web application designed to transform raw meeting transcripts into structured, actionable insights. By leveraging the power of **Google Gemini AI**, it automatically extracts summaries, tasks, owners, deadlines, and project priorities, helping teams stay organized and focused.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snigdha-aravandi/ai-meeting-insight-generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/snigdha-aravandi/ai-meeting-insight-generator/issues"
+  },
+  "homepage": "https://github.com/snigdha-aravandi/ai-meeting-insight-generator#readme",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1"
+  }
+}

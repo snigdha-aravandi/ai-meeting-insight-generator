@@ -1,8 +1,5 @@
-// Configuration - Get your API key from https://aistudio.google.com/
-const CONFIG = {
-    API_KEY: 'AIzaSyCPRS4XchE0OlABDxC_gSQILRYZAaoHr-M',
-    MODEL: 'gemini-1.5-flash-latest'
-};
+// API endpoint configuration
+const API_ENDPOINT = '/api/analyze';
 
 document.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
@@ -29,10 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!CONFIG.API_KEY || CONFIG.API_KEY.includes('PASTE_YOUR_GEMINI')) {
-            alert('Please add your Google Gemini API key in main.js to use the AI features.');
-            return;
-        }
+        // Local validation remains same (no transcript check)
 
         // Show loading state
         setLoading(true);
@@ -111,66 +105,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Real AI API Call using Google Gemini
+     * Calls the local serverless API to process the transcript
      */
     async function analyzeMeetingTranscript(transcript) {
-        const URL = `https://generativelanguage.googleapis.com/v1/models/${CONFIG.MODEL}:generateContent?key=${CONFIG.API_KEY}`;
-
-        const systemPrompt = "You are an AI meeting assistant. Extract structured information from meeting transcripts.";
-
-        const userPrompt = `
-Extract meeting insights from the following transcript:
-
-"${transcript}"
-
-Requirements:
-1. Return a valid JSON object.
-2. The summary must contain 3-5 concise bullet points.
-3. Extract clear action items/tasks.
-4. Identify owners and deadlines for each task.
-5. Assign a priority to each task based on these rules:
-   - High: Urgent tasks or deadlines within a few days.
-   - Medium: Important but not urgent.
-   - Low: Optional or long-term tasks.
-6. If owner or deadline is missing, return "Not specified".
-
-JSON Format:
-{
-  "summary": ["point1", "point2", "point3"],
-  "action_items": [
-    {
-      "task": "item description",
-      "owner": "name or 'Not specified'",
-      "deadline": "date or 'Not specified'",
-      "priority": "High | Medium | Low"
-    }
-  ]
-}
-`;
-
-        const response = await fetch(URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
-                }]
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || `API Error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
         try {
-            const rawText = data.candidates[0].content.parts[0].text;
-            return JSON.parse(rawText);
-        } catch (e) {
-            console.error("Failed to parse AI response:", e);
-            throw new Error("The AI returned an invalid response format. Please try again.");
+            const response = await fetch(API_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ transcript })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Server Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('API Error:', error);
+            throw error;
         }
     }
 
