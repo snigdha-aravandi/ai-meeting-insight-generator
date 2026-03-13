@@ -1,5 +1,8 @@
-// API endpoint configuration
-const API_ENDPOINT = '/api/analyze';
+// Configuration - Get your API key from https://aistudio.google.com/
+const CONFIG = {
+    API_KEY: 'AIzaSyCPRS4XchE0OlABDxC_gSQILRYZAaoHr-M',
+    MODEL: null // Discovered dynamically
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     const generateBtn = document.getElementById('generate-btn');
@@ -26,7 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Local validation remains same (no transcript check)
+        if (!CONFIG.API_KEY || CONFIG.API_KEY.includes('PASTE_YOUR_GEMINI')) {
+            alert('Please add your Google Gemini API key in main.js to use the AI features.');
+            return;
+        }
 
         // Show loading state
         setLoading(true);
@@ -105,28 +111,97 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Calls the local serverless API to process the transcript
+     * Dynamically discovers a supported Gemini model
+     */
+    async function discoverModel() {
+        if (CONFIG.MODEL) return CONFIG.MODEL;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${CONFIG.API_KEY}`);
+            if (!response.ok) throw new Error('Failed to list models');
+            
+            const data = await response.json();
+            
+            // Find the first model that supports generateContent
+            const validModel = data.models.find(m => 
+                m.supportedGenerationMethods.includes('generateContent') && 
+                m.name.includes('gemini')
+            );
+
+            if (!validModel) throw new Error('No compatible Gemini models found for this API key.');
+
+            // Store only the final part of the name (e.g., 'gemini-1.5-flash')
+            CONFIG.MODEL = validModel.name.split('/').pop();
+            console.log('Dynamic model selected:', CONFIG.MODEL);
+            return CONFIG.MODEL;
+        } catch (error) {
+            console.error('Model Discovery Error:', error);
+            throw new Error('Could not automatically detect a valid AI model. Please check your API key.');
+        }
+    }
+
+    /**
+     * Real AI API Call using Google Gemini
      */
     async function analyzeMeetingTranscript(transcript) {
+        // Step 1: Ensure we have a valid model
+        const modelName = await discoverModel();
+        
+        const URL = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${CONFIG.API_KEY}`;
+        const systemPrompt = "You are an AI meeting assistant. Extract structured information from meeting transcripts.";
+        const userPrompt = `
+Extract meeting insights from the following transcript:
+
+"${transcript}"
+
+Requirements:
+1. Return a valid JSON object.
+2. The summary must contain 3-5 concise bullet points.
+3. Extract clear action items/tasks.
+4. Identify owners and deadlines for each task.
+5. Assign a priority to each task based on these rules:
+   - High: Urgent tasks or deadlines within a few days.
+   - Medium: Important but not urgent.
+   - Low: Optional or long-term tasks.
+6. If owner or deadline is missing, return "Not specified".
+
+JSON Format:
+{
+  "summary": ["point1", "point2", "point3"],
+  "action_items": [
+    {
+      "task": "item description",
+      "owner": "name or 'Not specified'",
+      "deadline": "date or 'Not specified'",
+      "priority": "High | Medium | Low"
+    }
+  ]
+}
+`;
+
+        const response = await fetch(URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: systemPrompt + "\n\n" + userPrompt }]
+                }]
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
         try {
-            const response = await fetch(API_ENDPOINT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ transcript })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || `Server Error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('API Error:', error);
-            throw error;
+            const rawText = data.candidates[0].content.parts[0].text;
+            return JSON.parse(rawText);
+        } catch (e) {
+            console.error("Failed to parse AI response:", e);
+            throw new Error("The AI returned an invalid response format. Please try again.");
         }
     }
 
