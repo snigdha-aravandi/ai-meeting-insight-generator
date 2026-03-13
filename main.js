@@ -1,7 +1,7 @@
 // Configuration - Get your API key from https://aistudio.google.com/
 const CONFIG = {
     API_KEY: 'AIzaSyCPRS4XchE0OlABDxC_gSQILRYZAaoHr-M',
-    MODEL: 'gemini-1.5-flash'
+    MODEL: 'gemini-1.5-flash-latest'
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Real AI API Call using Google Gemini
      */
     async function analyzeMeetingTranscript(transcript) {
-        const URL = `https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.MODEL}:generateContent?key=${CONFIG.API_KEY}`;
+        const URL = `https://generativelanguage.googleapis.com/v1/models/${CONFIG.MODEL}:generateContent?key=${CONFIG.API_KEY}`;
 
         const systemPrompt = "You are an AI meeting assistant. Extract structured information from meeting transcripts.";
 
