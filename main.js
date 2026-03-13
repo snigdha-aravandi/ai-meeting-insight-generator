@@ -1,7 +1,7 @@
 // Configuration - Get your API key from https://aistudio.google.com/
 const CONFIG = {
     API_KEY: 'AIzaSyCPRS4XchE0OlABDxC_gSQILRYZAaoHr-M',
-    MODEL: null // Discovered dynamically
+    MODEL: 'gemini-2.0-flash'
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -111,43 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Dynamically discovers a supported Gemini model
-     */
-    async function discoverModel() {
-        if (CONFIG.MODEL) return CONFIG.MODEL;
-
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${CONFIG.API_KEY}`);
-            if (!response.ok) throw new Error('Failed to list models');
-            
-            const data = await response.json();
-            
-            // Find the first model that supports generateContent
-            const validModel = data.models.find(m => 
-                m.supportedGenerationMethods.includes('generateContent') && 
-                m.name.includes('gemini')
-            );
-
-            if (!validModel) throw new Error('No compatible Gemini models found for this API key.');
-
-            // Store only the final part of the name (e.g., 'gemini-1.5-flash')
-            CONFIG.MODEL = validModel.name.split('/').pop();
-            console.log('Dynamic model selected:', CONFIG.MODEL);
-            return CONFIG.MODEL;
-        } catch (error) {
-            console.error('Model Discovery Error:', error);
-            throw new Error('Could not automatically detect a valid AI model. Please check your API key.');
-        }
-    }
-
-    /**
      * Real AI API Call using Google Gemini
      */
     async function analyzeMeetingTranscript(transcript) {
-        // Step 1: Ensure we have a valid model
-        const modelName = await discoverModel();
-        
-        const URL = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${CONFIG.API_KEY}`;
+        const URL = `https://generativelanguage.googleapis.com/v1/models/${CONFIG.MODEL}:generateContent?key=${CONFIG.API_KEY}`;
         const systemPrompt = "You are an AI meeting assistant. Extract structured information from meeting transcripts.";
         const userPrompt = `
 Extract meeting insights from the following transcript:
