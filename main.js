@@ -1,6 +1,6 @@
 // Configuration - Get your API key from https://aistudio.google.com/
 const CONFIG = {
-    API_KEY: 'AIzaSyCcG7TrZ7NauMH6zJZAh8IauMXJIFaJTgY',
+    API_KEY: 'AIzaSyCPRS4XchE0OlABDxC_gSQILRYZAaoHr-M',
     MODEL: 'gemini-1.5-flash-8b'
 };
 
